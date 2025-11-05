@@ -6,48 +6,47 @@
 /*   By: tkurukul <thilinaetoro4575@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 17:00:02 by tkurukul          #+#    #+#             */
-/*   Updated: 2025/10/28 22:27:39 by tkurukul         ###   ########.fr       */
+/*   Updated: 2025/11/05 20:16:36 by tkurukul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.hpp"
+#include <iomanip>
 
 bool	isFloat(std::string str)
 {
-	if (!str[0])
+	if (str.empty())
 		return (false);
 	int	flagf = 0;
 	int flagdot = 0;
-	for (int i = 0; str[i]; i++)
+	for (int i = 0; str[i]; ++i)
 	{
 		if (str[i] == 'f')
 			flagf += 1;
-		if (str[i] == '.')
+		else if (str[i] == '.')
 			flagdot += 1;
-		if (!std::isdigit(str[i]) && str[i] != '.'
-			&& str[i] != '+' && str[i] != '-'&& str[i] != 'f')
-			return (false);
-		if ((str[i] == '+' || str[i] == '-') && i != 0)
+		else if ((str[i] == '+' || str[i] == '-') && i == 0)
+			continue ;
+		else if (!std::isdigit(str[i]))
 			return (false);
 	}
-	if (flagf != 1|| flagdot != 1)
+	if (flagf != 1 || flagdot > 1)
 		return (false);
 	return (true);
 }
 
 bool	isDouble(std::string str)
 {
-	if (!str[0])
+	if (str.empty())
 		return (false);
 	int flagdot = 0;
-	for (int i = 0; str[i]; i++)
+	for (int i = 0; str[i]; ++i)
 	{
 		if (str[i] == '.')
 			flagdot += 1;
-		if (!std::isdigit(str[i]) && str[i] != '.'
-			&& (str[i] != '+' && str[i] != '-' && i == 0))
-			return (false);
-		if ((str[i] == '+' || str[i] == '-') && i != 0)
+		else if ((str[i] == '+' || str[i] == '-') && i == 0)
+			continue ;
+		else if (!std::isdigit(str[i]))
 			return (false);
 	}
 	if (flagdot != 1 || str[str.size() - 1] == '.')
@@ -57,16 +56,16 @@ bool	isDouble(std::string str)
 
 bool	isDigit(std::string str)
 {
-	int flagdig = 0;
-	if (!str[0])
+	bool flagdig = false;
+	if (str.empty())
 		return (false);
-	for (int i = 0; str[i]; i++)
+	for (int i = 0; str[i]; ++i)
 	{
 		if (std::isdigit(str[i]))
-			flagdig += 1;
-		if (!std::isdigit(str[i]) && str[i] != '+' && str[i] != '-')
-			return (false);
-		if ((str[i] == '+' || str[i] == '-') && i != 0)
+			flagdig = true;
+		else if ((str[i] == '+' || str[i] == '-') && i == 0)
+			continue ;
+		else if ((!std::isdigit(str[i])))
 			return (false);
 	}
 	if (!flagdig)
@@ -76,7 +75,7 @@ bool	isDigit(std::string str)
 
 bool	isChar(std::string str)
 {
-	if (!str[0])
+	if (str.empty())
 		return (false);
 	if (str.size() > 1)
 		return (false);
@@ -126,44 +125,45 @@ bool	manualPrinting(int flag)
 	return (0);
 }
 
-void	printingBlock(long double tmp, int flag, bool flagdot)
+void	printingBlock(long double tmp, int flag)
 {
+	// std::cout << tmp << std::endl;
 	if (manualPrinting(flag))
 		return ;
-	if (static_cast<char>(tmp) >= 32 && static_cast<char>(tmp) <= 126)
-		std::cout << "char: '" << static_cast<unsigned char>(tmp) << "'" << std::endl;
-	else if ((tmp > std::numeric_limits<unsigned char>::max()
-			&& tmp < std::numeric_limits<unsigned char>::min()))
-		std::cout << "char: imposiible!" << std::endl;
+	if ((tmp > std::numeric_limits<char>::max()
+				|| tmp < std::numeric_limits<char>::min()))
+		std::cout << "char: impossible!" << std::endl;
+	else if (static_cast<char>(tmp) >= 32 && static_cast<char>(tmp) <= 126)
+		std::cout << "char: '" << static_cast<char>(tmp) << "'" << std::endl;
 	else
 		std::cout << "char: not printable!" << std::endl;
-	if (!(tmp > std::numeric_limits<int>::max() && tmp < std::numeric_limits<int>::min()))
+	if (!(tmp > std::numeric_limits<int>::max() || tmp < -std::numeric_limits<int>::max() - 1))
 		std::cout << "int: " << static_cast<int>(tmp) << std::endl;
 	else
 		std::cout << "int: impossible!" << std::endl;
-	if ((tmp < std::numeric_limits<float>::max() && tmp >= -std::numeric_limits<float>::max() && flagdot))
-		std::cout << "float: " << static_cast<float>(tmp) << "f" << std::endl;
-	else if ((tmp <= std::numeric_limits<float>::max() && tmp >= -std::numeric_limits<float>::max() && !flagdot))
-		std::cout << "float: " << static_cast<float>(tmp) << ".0f" << std::endl;
+	if (((tmp < std::numeric_limits<float>::max() || tmp >= -std::numeric_limits<float>::max())))
+		std::cout << std::fixed << std::setprecision(1) << "float: " << static_cast<float>(tmp) << "f" << std::endl;
 	else
 		std::cout << "float: impossible!" << std::endl;
-	if ((tmp <= std::numeric_limits<double>::max() && tmp >= -std::numeric_limits<double>::max() && flagdot))
-		std::cout << "double: " << static_cast<double>(tmp) << std::endl;
-	else if ((tmp <= std::numeric_limits<double>::max() && tmp >= -std::numeric_limits<double>::max() && !flagdot))
-		std::cout << "double: " << static_cast<double>(tmp) << ".0" << std::endl;
+	if (((tmp <= std::numeric_limits<double>::max() || tmp >= -std::numeric_limits<double>::max())))
+		std::cout << std::fixed << std::setprecision(1) << "double: " << static_cast<double>(tmp) << std::endl;
 	else
 		std::cout << "double: impossible!" << std::endl;
 }
 
 long double	toFloat(std::string str)
 {
-	str.erase(str.end() - 1);
+	if (str[str.size() - 1] == 'f')
+		str.erase(str.end() - 1);
+	// std::cout << "str: " << str << std::endl;
 	std::stringstream	tmp(str);
 	long double ret = -404;
 	tmp >> ret;
 	if (tmp.fail())
-		std::cerr << "1Sstream has failed." << std::endl;
-	// std::cout << "ret: " << ret << std::endl;
+	{
+		// std::cerr << "1Sstream has failed." << std::endl;
+		return (-404);
+	}
 	return (ret);
 }
 
@@ -173,19 +173,10 @@ long double	toIntToDouble(std::string str)
 	long double ret = -404;
 	tmp >> ret;
 	if (tmp.fail())
-		std::cerr << "2Sstream has failed." << std::endl;
-	return (ret);
-}
-
-bool	isDot(std::string str)
-{
-	int flagdot = 0;
-	for (int i = 0; str[i]; i++)
 	{
-		if (str[i] == '.')
-			flagdot += 1;
+		// std::cerr << "2Sstream has failed." << std::endl;
+		return (-404);
 	}
-	if (!flagdot)
-		return (false);
-	return (true);
+	// std::cout << "ret: " << ret << std::endl;
+	return (ret);
 }

@@ -6,7 +6,7 @@
 /*   By: tkurukul <thilinaetoro4575@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 20:52:22 by tkurukul          #+#    #+#             */
-/*   Updated: 2025/10/28 22:20:02 by tkurukul         ###   ########.fr       */
+/*   Updated: 2025/11/05 17:55:34 by tkurukul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ int	ScalarConverter::convert(std::string str)
 	try
 	{
 		int flag = -42;
-		bool	flagdot = 0;
 		long double tmp;
 		if (isFloat(str))
 			flag = 1;
@@ -78,9 +77,13 @@ int	ScalarConverter::convert(std::string str)
 			flag = 0;
 		else
 			throw ScalarConverter::WrongInput();
-		flagdot = isDot(str);
 		switchCase(flag, tmp, str);
-		printingBlock(tmp, flag, flagdot);
+		if (tmp == -404)
+		{
+			std::cerr << "Input error" << std::endl;
+			return (1);
+		}
+		printingBlock(tmp, flag);
 	}
 	catch (const std::out_of_range& e)
 	{
